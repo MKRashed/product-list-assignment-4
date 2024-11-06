@@ -1,3 +1,6 @@
 import useProduct from "./productData";
 
-export { useProduct };
+import useDebounce from "./useDebounce";
+
+export { useDebounce, useProduct };
+

@@ -1,9 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { ProductCardContext } from "../context";
+import { useDebounce } from "../hooks";
 import { fetchProductCaterogy } from "../utils/fetchProductCaterogy";
 
 export default function ProductHeader() {
-  const { cartData, setSorting, setFiltering } = useContext(ProductCardContext);
+  const { cartData, sorting, setSorting, filtering, setFiltering, searchValue,
+    setSearchValue } = useContext(ProductCardContext);
   const [filterToggle, setFilterToggle] = useState(false);
   const [sortToggle, setSortToggle] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -14,6 +16,31 @@ export default function ProductHeader() {
     };
     handlePromise();
   }, []);
+
+  function handleSorting(value){
+    setSorting(() => {
+      return value; 
+    });
+    setSortToggle(false)
+    
+  }
+
+  function handleFilter(category) {
+    setFiltering( () => {
+      return category
+    })
+  }
+
+  const doSearch = useDebounce( (term) => {
+    setSearchValue(term);
+  }, 500)
+
+  function handleChange(event){
+    const value = event.target.value;
+    doSearch(value)
+    
+  }
+
   return (
     <>
       <div className="relative mx-auto max-w-7xl px-4 sm:static sm:px-6 lg:px-8">
@@ -63,20 +90,24 @@ export default function ProductHeader() {
                 >
                   <div className="py-1" role="none">
                     <a
-                      className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-all"
+                      className={`cursor-pointer block px-4 py-2 text-sm ${
+                        sorting === "asc" ? "text-blue-700 bg-gray-100" : "text-gray-700"
+                      } hover:bg-gray-50 transition-all`}
                       role="menuitem"
                       tabIndex="-1"
                       id="menu-item-0"
-                      onClick={() => setSorting("asc")}
+                      onClick={() => handleSorting("asc")}
                     >
-                      Low to High
+                      Low to High 
                     </a>
                     <a
-                      className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-all"
+                      className={`cursor-pointer block px-4 py-2 text-sm ${
+                        sorting === "desc" ? "text-blue-700 bg-gray-100" : "text-gray-700"
+                      } hover:bg-gray-50 transition-all`}
                       role="menuitem"
                       tabIndex="-1"
                       id="menu-item-0"
-                      onClick={() => setSorting("desc")}
+                      onClick={() => handleSorting("desc")}
                     >
                       High to Low
                     </a>
@@ -121,14 +152,16 @@ export default function ProductHeader() {
                     {categories.map((category) => (
                       <label
                         key={category}
-                        className="inline-flex w-full cursor-pointer hover:bg-gray-50 items-center px-4 py-2 text-sm text-gray-700"
+                        className={`inline-flex w-full cursor-pointer items-center px-4 py-2 text-sm 
+                          ${filtering === category ? "bg-gray-200 text-blue-700" : "hover:bg-gray-50 text-gray-700"}`}
                       >
                         <input
                           type="radio"
                           name="filter-option"
                           className="form-radio h-4 w-4"
                           id="filter-option-1"
-                          onChange={() => setFiltering(category)}
+                          onChange={()=>handleFilter(category)}
+                          checked={filtering === category}
                         />
                         <span className="ml-2">{category}</span>
                       </label>
@@ -161,6 +194,7 @@ export default function ProductHeader() {
                 type="text"
                 aria-expanded="false"
                 aria-autocomplete="list"
+                onChange={handleChange}
               />
             </div>
 
