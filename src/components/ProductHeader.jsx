@@ -4,8 +4,14 @@ import { useDebounce } from "../hooks";
 import { fetchProductCategory } from "../utils/fetchProductCategory";
 
 export default function ProductHeader() {
-  const { cartData, sorting, setSorting, filtering, setFiltering, searchValue,
-    setSearchValue } = useContext(ProductCardContext);
+  const {
+    cartData,
+    sorting,
+    setSorting,
+    filtering,
+    setFiltering,
+    setSearchValue,
+  } = useContext(ProductCardContext);
   const [filterToggle, setFilterToggle] = useState(false);
   const [sortToggle, setSortToggle] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -17,26 +23,33 @@ export default function ProductHeader() {
     handlePromise();
   }, []);
 
-  function handleSorting(value){
+  function handleSortToggle() {
+    setSortToggle(!sortToggle);
+    setFilterToggle(false);
+  }
+  function handleFilterToggle() {
+    setSortToggle(false);
+    setFilterToggle(!filterToggle);
+  }
+
+  function handleSorting(value) {
     setSorting(() => {
-      return value; 
+      return value;
     });
-    setSortToggle(false)
-    
+    setSortToggle(false);
   }
 
   function handleFilter(category) {
-    setFiltering(prevCategory => prevCategory === category ? "" : category);
+    setFiltering((prevCategory) => (prevCategory === category ? "" : category));
   }
 
-  const doSearch = useDebounce( (term) => {
+  const doSearch = useDebounce((term) => {
     setSearchValue(term);
-  }, 500)
+  }, 500);
 
-  function handleChange(event){
+  function handleChange(event) {
     const value = event.target.value;
-    doSearch(value)
-    
+    doSearch(value);
   }
 
   return (
@@ -58,7 +71,7 @@ export default function ProductHeader() {
                   type="button"
                   className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm text-gray-400 hover:text-gray-500 focus:text-gray-700 transition-all"
                   id="menu-button"
-                  onClick={() => setSortToggle((prevSort) => !prevSort)}
+                  onClick={handleSortToggle}
                   aria-expanded="true"
                   aria-haspopup="true"
                 >
@@ -89,18 +102,22 @@ export default function ProductHeader() {
                   <div className="py-1" role="none">
                     <a
                       className={`cursor-pointer block px-4 py-2 text-sm ${
-                        sorting === "asc" ? "text-blue-700 bg-gray-100" : "text-gray-700"
+                        sorting === "asc"
+                          ? "text-blue-700 bg-gray-100"
+                          : "text-gray-700"
                       } hover:bg-gray-50 transition-all`}
                       role="menuitem"
                       tabIndex="-1"
                       id="menu-item-0"
                       onClick={() => handleSorting("asc")}
                     >
-                      Low to High 
+                      Low to High
                     </a>
                     <a
                       className={`cursor-pointer block px-4 py-2 text-sm ${
-                        sorting === "desc" ? "text-blue-700 bg-gray-100" : "text-gray-700"
+                        sorting === "desc"
+                          ? "text-blue-700 bg-gray-100"
+                          : "text-gray-700"
                       } hover:bg-gray-50 transition-all`}
                       role="menuitem"
                       tabIndex="-1"
@@ -120,7 +137,7 @@ export default function ProductHeader() {
                   type="button"
                   className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm text-gray-400 hover:text-gray-500 focus:text-gray-700 transition-all"
                   id="filter-button"
-                  onClick={() => setFilterToggle((prevToggle) => !prevToggle)}
+                  onClick={handleFilterToggle}
                   aria-expanded="false"
                   aria-haspopup="true"
                 >
@@ -147,24 +164,28 @@ export default function ProductHeader() {
                   aria-labelledby="filter-button"
                 >
                   <div className="py-1" role="none">
-                      {categories.map((category) => (
-                        <label
-                          key={category}
-                          className={`inline-flex w-full cursor-pointer items-center px-4 py-2 text-sm 
-                            ${filtering === category ? "bg-gray-200 text-blue-700" : "hover:bg-gray-50 text-gray-700"}`}
-                        >
-                          <input
-                            type="checkbox"
-                            name="filter-option"
-                            className="form-checkbox h-4 w-4"
-                            id={`filter-option-${category}`}
-                            onChange={() => handleFilter(category)}
-                            checked={filtering === category}
-                          />
-                          <span className="ml-2">{category}</span>
-                        </label>
-                      ))}
-                    </div>
+                    {categories.map((category) => (
+                      <label
+                        key={category}
+                        className={`inline-flex w-full cursor-pointer items-center px-4 py-2 text-sm 
+                            ${
+                              filtering === category
+                                ? "bg-gray-200 text-blue-700"
+                                : "hover:bg-gray-50 text-gray-700"
+                            }`}
+                      >
+                        <input
+                          type="checkbox"
+                          name="filter-option"
+                          className="form-checkbox h-4 w-4"
+                          id={`filter-option-${category}`}
+                          onChange={() => handleFilter(category)}
+                          checked={filtering === category}
+                        />
+                        <span className="ml-2">{category}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -197,7 +218,7 @@ export default function ProductHeader() {
             </div>
 
             <div className="flow-root">
-              <a href="#" className="group -m-2 flex items-center p-2">
+              <a className="group -m-2 flex items-center p-2">
                 <svg
                   className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
                   fill="none"
