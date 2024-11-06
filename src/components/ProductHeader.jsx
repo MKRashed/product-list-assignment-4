@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { ProductCardContext } from "../context";
 import { useDebounce } from "../hooks";
-import { fetchProductCaterogy } from "../utils/fetchProductCaterogy";
+import { fetchProductCategory } from "../utils/fetchProductCategory";
 
 export default function ProductHeader() {
   const { cartData, sorting, setSorting, filtering, setFiltering, searchValue,
@@ -11,7 +11,7 @@ export default function ProductHeader() {
   const [categories, setCategories] = useState([]);
   useEffect(() => {
     const handlePromise = async () => {
-      const data = await fetchProductCaterogy();
+      const data = await fetchProductCategory();
       setCategories(data);
     };
     handlePromise();
