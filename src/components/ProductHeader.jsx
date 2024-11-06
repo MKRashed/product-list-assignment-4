@@ -26,9 +26,7 @@ export default function ProductHeader() {
   }
 
   function handleFilter(category) {
-    setFiltering( () => {
-      return category
-    })
+    setFiltering(prevCategory => prevCategory === category ? "" : category);
   }
 
   const doSearch = useDebounce( (term) => {
@@ -149,24 +147,24 @@ export default function ProductHeader() {
                   aria-labelledby="filter-button"
                 >
                   <div className="py-1" role="none">
-                    {categories.map((category) => (
-                      <label
-                        key={category}
-                        className={`inline-flex w-full cursor-pointer items-center px-4 py-2 text-sm 
-                          ${filtering === category ? "bg-gray-200 text-blue-700" : "hover:bg-gray-50 text-gray-700"}`}
-                      >
-                        <input
-                          type="radio"
-                          name="filter-option"
-                          className="form-radio h-4 w-4"
-                          id="filter-option-1"
-                          onChange={()=>handleFilter(category)}
-                          checked={filtering === category}
-                        />
-                        <span className="ml-2">{category}</span>
-                      </label>
-                    ))}
-                  </div>
+                      {categories.map((category) => (
+                        <label
+                          key={category}
+                          className={`inline-flex w-full cursor-pointer items-center px-4 py-2 text-sm 
+                            ${filtering === category ? "bg-gray-200 text-blue-700" : "hover:bg-gray-50 text-gray-700"}`}
+                        >
+                          <input
+                            type="checkbox"
+                            name="filter-option"
+                            className="form-checkbox h-4 w-4"
+                            id={`filter-option-${category}`}
+                            onChange={() => handleFilter(category)}
+                            checked={filtering === category}
+                          />
+                          <span className="ml-2">{category}</span>
+                        </label>
+                      ))}
+                    </div>
                 </div>
               )}
             </div>
