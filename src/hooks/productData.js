@@ -1,6 +1,10 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { ProductCardContext } from "../context";
 
 const useProduct = () => {
+  const { sorting, filtering } = useContext(ProductCardContext);
+  console.log({ filtering });
+
   const [products, setProducts] = useState([]); // Initialize as an array
   const [loading, setLoading] = useState({
     state: false,
@@ -8,7 +12,7 @@ const useProduct = () => {
   });
   const [error, setError] = useState(null);
 
-  const fetchProductData = async () => {
+  const fetchProductData = async (sorting, filtering) => {
     try {
       setLoading({
         ...loading,
@@ -17,7 +21,7 @@ const useProduct = () => {
       });
 
       const response = await fetch(
-        `https://fakestoreapi.com/products?limit=10`
+        `https://fakestoreapi.com/products?limit=10&sort=${sorting}`
       );
       if (!response.ok) {
         throw new Error(`Fetching product data failed: ${response.status}`);
@@ -34,14 +38,11 @@ const useProduct = () => {
       });
     }
   };
-
   useEffect(() => {
-    setLoading({
-      state: true,
-      message: "Finding products...",
-    });
-    fetchProductData();
-  }, []);
+    if (sorting && filtering) {
+      fetchProductData(sorting, filtering);
+    }
+  }, [sorting, filtering]);
 
   return {
     products,

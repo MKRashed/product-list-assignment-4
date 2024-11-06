@@ -1,10 +1,19 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ProductCardContext } from "../context";
+import { fetchProductCaterogy } from "../utils/fetchProductCaterogy";
+
 export default function ProductHeader() {
-  const { cartData } = useContext(ProductCardContext);
+  const { cartData, setSorting, setFiltering } = useContext(ProductCardContext);
   const [filterToggle, setFilterToggle] = useState(false);
   const [sortToggle, setSortToggle] = useState(false);
-
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    const handlePromise = async () => {
+      const data = await fetchProductCaterogy();
+      setCategories(data);
+    };
+    handlePromise();
+  }, []);
   return (
     <>
       <div className="relative mx-auto max-w-7xl px-4 sm:static sm:px-6 lg:px-8">
@@ -53,22 +62,24 @@ export default function ProductHeader() {
                   tabIndex="-1"
                 >
                   <div className="py-1" role="none">
-                    <span
+                    <a
                       className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-all"
                       role="menuitem"
                       tabIndex="-1"
                       id="menu-item-0"
+                      onClick={() => setSorting("asc")}
                     >
                       Low to High
-                    </span>
-                    <span
+                    </a>
+                    <a
                       className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-all"
                       role="menuitem"
                       tabIndex="-1"
                       id="menu-item-0"
+                      onClick={() => setSorting("desc")}
                     >
                       High to Low
-                    </span>
+                    </a>
                   </div>
                 </div>
               )}
@@ -101,36 +112,27 @@ export default function ProductHeader() {
               </div>
               {filterToggle && (
                 <div
-                  className="absolute z-10 mt-2 w-56 origin-top-right rounded-md  shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                  className="absolute z-10 mt-2 left-5 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                   role="menu"
                   aria-orientation="vertical"
                   aria-labelledby="filter-button"
                 >
                   <div className="py-1" role="none">
-                    <label className="">
-                      <input
-                        type="checkbox"
-                        className="form-checkbox h-4 w-4"
-                        id="filter-option-1"
-                      />
-                      <span className="ml-2">Category 1</span>
-                    </label>
-                    <label className="inline-flex w-full cursor-pointer hover:bg-gray-50 items-center px-4 py-2 text-sm text-gray-700">
-                      <input
-                        type="checkbox"
-                        className="form-checkbox h-4 w-4"
-                        id="filter-option-2"
-                      />
-                      <span className="ml-2">Category 2</span>
-                    </label>
-                    <label className="inline-flex w-full cursor-pointer hover:bg-gray-50 items-center px-4 py-2 text-sm text-gray-700">
-                      <input
-                        type="checkbox"
-                        className="form-checkbox h-4 w-4"
-                        id="filter-option-3"
-                      />
-                      <span className="ml-2">Category 3</span>
-                    </label>
+                    {categories.map((category) => (
+                      <label
+                        key={category}
+                        className="inline-flex w-full cursor-pointer hover:bg-gray-50 items-center px-4 py-2 text-sm text-gray-700"
+                      >
+                        <input
+                          type="radio"
+                          name="filter-option"
+                          className="form-radio h-4 w-4"
+                          id="filter-option-1"
+                          onChange={() => setFiltering(category)}
+                        />
+                        <span className="ml-2">{category}</span>
+                      </label>
+                    ))}
                   </div>
                 </div>
               )}
